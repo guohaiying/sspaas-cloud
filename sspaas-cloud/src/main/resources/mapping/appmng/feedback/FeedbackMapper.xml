@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.feedback.FeedbackMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.Feedback" >
+    <id column="feedback_id" property="feedbackId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="f_state" property="fState" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    feedback_id, user_id, content, add_time, state, type, title
+  </sql>
+  
+  <!-- 提交反馈信息 -->
+  <insert id="saveFeedBack" parameterType="com.sspaas.sspaascloud.entity.appmng.Feedback" >
+    insert into feedback
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="fState != null" >
+        f_state
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="fState != null" >
+        #{fState,jdbcType=SMALLINT}
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 查看我的反馈列表 -->
+   <select id="getMyFeedBackList" resultType="java.util.HashMap" parameterType="java.util.HashMap" >
+    select 
+    fb.feedback_id as feedbackId,fb.title,fb.content,fb.add_time as addTime,fb.state,
+    (select name from feedback_type where feedback_type_id=fb.type) as type
+    from feedback fb
+    where user_id= #{userId,jdbcType=INTEGER} and f_state=1
+  </select>
+  
+  <!-- 根据反馈id修改反馈状态 -->
+  <update id="delMyFeedBack" parameterType="java.util.HashMap" >
+    update feedback
+    set f_state = 2
+    where feedback_id = #{feedbackId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据用户id修改反馈状态 -->
+  <update id="emptyMyFeedBack" parameterType="java.util.HashMap" >
+    update feedback
+    set f_state = 2
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from feedback
+    where feedback_id = #{feedbackId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from feedback
+    where feedback_id = #{feedbackId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.Feedback" >
+    insert into feedback (feedback_id, user_id, title,content, 
+      add_time, state, type
+      )
+    values (#{feedbackId,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=BIGINT}, #{state,jdbcType=SMALLINT}, #{type,jdbcType=SMALLINT}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.Feedback" >
+    update feedback
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="title != null" >
+        content = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where feedback_id = #{feedbackId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.Feedback" >
+    update feedback
+    set user_id = #{userId,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=BIGINT},
+      state = #{state,jdbcType=SMALLINT},
+      type = #{type,jdbcType=SMALLINT}
+    where feedback_id = #{feedbackId,jdbcType=INTEGER}
+  </update>
+</mapper>

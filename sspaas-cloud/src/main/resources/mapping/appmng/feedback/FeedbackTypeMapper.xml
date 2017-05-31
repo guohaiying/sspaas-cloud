@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.feedback.FeedbackTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.FeedbackType" >
+    <id column="feedback_type_id" property="feedbackTypeId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="descript" property="descript" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    feedback_type_id, name, descript, add_time
+  </sql>
+  
+  <!-- 获取反馈类型列表 -->
+  <select id="getFeedBackTypeList" resultMap="BaseResultMap">
+    select 
+    *
+    from feedback_type
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from feedback_type
+    where feedback_type_id = #{feedbackTypeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from feedback_type
+    where feedback_type_id = #{feedbackTypeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.FeedbackType" >
+    insert into feedback_type (feedback_type_id, name, descript, 
+      add_time)
+    values (#{feedbackTypeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{descript,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.FeedbackType" >
+    insert into feedback_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="feedbackTypeId != null" >
+        feedback_type_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="descript != null" >
+        descript,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="feedbackTypeId != null" >
+        #{feedbackTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="descript != null" >
+        #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.FeedbackType" >
+    update feedback_type
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="descript != null" >
+        descript = #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where feedback_type_id = #{feedbackTypeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.FeedbackType" >
+    update feedback_type
+    set name = #{name,jdbcType=VARCHAR},
+      descript = #{descript,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=BIGINT}
+    where feedback_type_id = #{feedbackTypeId,jdbcType=INTEGER}
+  </update>
+</mapper>

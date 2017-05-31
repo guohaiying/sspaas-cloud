@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.user.UserLoginRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.UserLoginRecord" >
+    <id column="user_record_id" property="userRecordId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="login_time" property="loginTime" jdbcType="BIGINT" />
+    <result column="quit_time" property="quitTime" jdbcType="BIGINT" />
+    <result column="login_place" property="loginPlace" jdbcType="VARCHAR" />
+    <result column="login_ip" property="loginIp" jdbcType="VARCHAR" />
+    <result column="equipment" property="equipment" jdbcType="SMALLINT" />
+    <result column="uuid" property="uuid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_record_id, user_id, login_time, quit_time, login_place, login_ip, equipment, 
+    uuid
+  </sql>
+  
+  <!-- 记录用户的退出时间 -->
+  <update id="updateQuitTime" >
+    update user_login_record
+    set quit_time = #{1}
+    where user_id=#{0} order by login_time desc limit 1
+  </update>
+  
+  <!-- 添加用户登录记录 -->
+  <insert id="insertUserLoginRecord" parameterType="com.sspaas.sspaascloud.entity.appmng.UserLoginRecord" >
+    insert into user_login_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userRecordId != null" >
+        user_record_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="loginTime != null" >
+        login_time,
+      </if>
+      <if test="quitTime != null" >
+        quit_time,
+      </if>
+      <if test="loginPlace != null" >
+        login_place,
+      </if>
+      <if test="loginIp != null" >
+        login_ip,
+      </if>
+      <if test="equipment != null" >
+        equipment,
+      </if>
+      <if test="uuid != null" >
+        uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userRecordId != null" >
+        #{userRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=BIGINT},
+      </if>
+      <if test="quitTime != null" >
+        #{quitTime,jdbcType=BIGINT},
+      </if>
+      <if test="loginPlace != null" >
+        #{loginPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="equipment != null" >
+        #{equipment,jdbcType=SMALLINT},
+      </if>
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  
+  <!-- 获取用户最后一次登录uuid -->
+  <select id="getUserUUId" resultType="java.lang.String" parameterType="java.lang.Integer" >
+    select 
+    uuid
+    from user_login_record
+    where user_id = #{userId,jdbcType=INTEGER} order by login_time desc limit 1
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_login_record
+    where user_record_id = #{userRecordId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_login_record
+    where user_record_id = #{userRecordId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.UserLoginRecord" >
+    insert into user_login_record (user_record_id, user_id, login_time, 
+      quit_time, login_place, login_ip, 
+      equipment, uuid)
+    values (#{userRecordId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{loginTime,jdbcType=BIGINT}, 
+      #{quitTime,jdbcType=BIGINT}, #{loginPlace,jdbcType=VARCHAR}, #{loginIp,jdbcType=VARCHAR}, 
+      #{equipment,jdbcType=SMALLINT}, #{uuid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.UserLoginRecord" >
+    insert into user_login_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userRecordId != null" >
+        user_record_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="loginTime != null" >
+        login_time,
+      </if>
+      <if test="quitTime != null" >
+        quit_time,
+      </if>
+      <if test="loginPlace != null" >
+        login_place,
+      </if>
+      <if test="loginIp != null" >
+        login_ip,
+      </if>
+      <if test="equipment != null" >
+        equipment,
+      </if>
+      <if test="uuid != null" >
+        uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userRecordId != null" >
+        #{userRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=BIGINT},
+      </if>
+      <if test="quitTime != null" >
+        #{quitTime,jdbcType=BIGINT},
+      </if>
+      <if test="loginPlace != null" >
+        #{loginPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="equipment != null" >
+        #{equipment,jdbcType=SMALLINT},
+      </if>
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.UserLoginRecord" >
+    update user_login_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="loginTime != null" >
+        login_time = #{loginTime,jdbcType=BIGINT},
+      </if>
+      <if test="quitTime != null" >
+        quit_time = #{quitTime,jdbcType=BIGINT},
+      </if>
+      <if test="loginPlace != null" >
+        login_place = #{loginPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        login_ip = #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="equipment != null" >
+        equipment = #{equipment,jdbcType=SMALLINT},
+      </if>
+      <if test="uuid != null" >
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_record_id = #{userRecordId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.UserLoginRecord" >
+    update user_login_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      login_time = #{loginTime,jdbcType=BIGINT},
+      quit_time = #{quitTime,jdbcType=BIGINT},
+      login_place = #{loginPlace,jdbcType=VARCHAR},
+      login_ip = #{loginIp,jdbcType=VARCHAR},
+      equipment = #{equipment,jdbcType=SMALLINT},
+      uuid = #{uuid,jdbcType=VARCHAR}
+    where user_record_id = #{userRecordId,jdbcType=INTEGER}
+  </update>
+</mapper>

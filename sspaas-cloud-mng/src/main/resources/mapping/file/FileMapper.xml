@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.file.FileMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.File" >
+    <id column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="old_name" property="oldName" jdbcType="VARCHAR" />
+    <result column="upload_name" property="uploadName" jdbcType="VARCHAR" />
+    <result column="file_type_id" property="fileTypeId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
+    <result column="size" property="size" jdbcType="BIGINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="delete_time" property="deleteTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+    <result column="MD5" property="md5" jdbcType="VARCHAR" />
+    <result column="file_path" property="filePath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    file_id, user_id, old_name, upload_name, file_type_id, type, parent_id, size, add_time, 
+    delete_time, update_time, state, MD5, file_path
+  </sql>
+  
+  
+  <!-- 查询所有文件 -->
+	<select id="findAllFile" resultType="java.util.Map"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select ft.file_id as fileId,ft.user_id as userId,u.username,u.phone,u.email,ft.old_name as fileName,ft.file_type_id as fileTypeId,
+     	(select name from file_type where file_type_id=ft.file_type_id) as typeName,
+     	ft.type,ft.parent_id AS parentId,ft.size,ft.add_time as addTime,ft.delete_time as deleteTime,ft.update_time as updateTime,ft.state,ft.file_path as filePath,
+		IFNULL((select f.old_name from file f where f.file_id=ft.parent_id),'根目录') as parentName,
+		0 as level,true as isLeaf,ft.parent_id AS parent,true as laoded,false as expanded
+		from file ft,user u where ft.user_id=u.user_id
+		
+		<if test="map.parentId != null and map.parentId != ''">
+	        where ft.parent_id=#{map.parentId,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.userId != null and map.userId != ''">
+	        and ft.user_id=#{map.userId,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.fileName != null and map.fileName != ''">
+	        and ft.old_name like '%${map.fileName}%'
+	    </if>
+	    
+		order by ${sidx} ${sord} LIMIT
+		#{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT}
+	</select>
+
+	<!-- 查询所有文件类型 -->
+	<select id="findAllFileCount" resultType="java.lang.Integer"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select count(*) as count
+		from file ft,user u where ft.user_id=u.user_id
+		<if test="map.parentId != null and map.parentId != ''">
+	        where parent_id=#{map.parentId,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.userId != null and map.userId != ''">
+	        and ft.user_id=#{map.userId,jdbcType=BIGINT}
+	    </if>
+	    
+	     <if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.fileName != null and map.fileName != ''">
+	        and ft.old_name like '%${map.fileName}%'
+	    </if>
+	    
+	</select>
+	
+	
+	<!-- 查找所有上传文件的用户 -->
+	<select id="getAllFileUser" resultType="java.util.Map">
+		select u.username,ft.user_id as userId
+		from file ft,user u where ft.user_id=u.user_id GROUP BY ft.user_id
+	</select>
+	
+	<!-- 根据userId查询用户树结构 -->
+	<select id="getAllFileByUserId" resultType="java.util.Map">
+		select f.file_id as id,f.parent_id as pId,f.old_name as name,'false' as 'open',
+		(select IFNULL(icon,(select icon from file_type fpe where fpe.parent_id=0 and fpe.file_type_id=ft.parent_id)) from file_type ft where ft.file_type_id=f.file_type_id) as icon 
+		from file f where f.user_id=#{userId,jdbcType=BIGINT} and f.state = 1
+	</select>
+  
+  
+</mapper>

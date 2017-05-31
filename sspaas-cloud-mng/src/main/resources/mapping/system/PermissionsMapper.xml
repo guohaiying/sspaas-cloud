@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.permissions.PermissionsMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.Permissions" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="menu_id" property="menuId" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <select id="getMenuRoleByRoleId" resultType="java.lang.String" parameterType="java.lang.String" >
+    select menu_id as menuId
+    from permissions
+    where role_id = #{roleId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getMenuRoleByRoleIdList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, menu_id,role_id
+    from permissions
+    where role_id = #{roleId,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 添加权限 -->
+  <insert id="insertPermissions" parameterType="com.sspaas.sspaascloud.entity.Permissions" useGeneratedKeys="true" >
+    insert into permissions
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="menuId != null" >
+        menu_id
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+
+  <!-- 删除角色对应的菜单权限 -->
+  <delete id="deletePermissions" parameterType="java.util.List" >
+    delete from permissions
+    where menu_id in (
+    <foreach collection="list" item="item" index="index"
+             separator=",">
+      #{item}
+    </foreach>
+    )
+  </delete>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from permissions
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteByRoleId" parameterType="java.lang.String" >
+    delete from permissions
+    where role_id = #{roleId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.Permissions" >
+    insert into permissions (id, role_id, menu_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR}, #{menuId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.Permissions" >
+    update permissions
+    set role_id = #{roleId,jdbcType=VARCHAR},
+      menu_id = #{menuId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, role_id, menu_id
+    from permissions
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, role_id, menu_id
+    from permissions
+  </select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.version.AndroidVersionMapper">
+	<resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.AndroidVersion">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="version" property="version" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, version, update_time, url, state
+	</sql>
+	<select id="total" resultType="java.lang.Integer"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select
+		count(*)
+		from android_version
+	</select>
+
+
+	<select id="selectVersionList" resultType="java.util.HashMap"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select
+		id,version,update_time as updateTime,url,state
+		from android_version
+
+		<if test="sidx != null and sidx != ''">
+			ORDER BY ${sidx} ${sord}
+		</if>
+		limit #{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT};
+	</select>
+	
+	
+	
+	<!-- 修改容量类型 -->
+  <update id="editVersion" parameterType="com.sspaas.sspaascloud.entity.AndroidVersion" >
+    update android_version
+    <set >
+      <if test="version != null" >
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 添加容量类型 -->
+  <insert id="addVersion" parameterType="com.sspaas.sspaascloud.entity.AndroidVersion" >
+    insert into android_version
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="state != null" >
+        state
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="version != null" >
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteVersion" parameterType="java.lang.Integer" >
+    delete from android_version
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+	
+	
+
+</mapper>

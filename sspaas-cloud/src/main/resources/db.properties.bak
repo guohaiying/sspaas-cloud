@@ -1,0 +1,39 @@
+# 数据库驱动
+jdbc.driverClass=com.mysql.jdbc.Driver
+# 数据库连接
+jdbc.url=
+# 用户名
+jdbc.username=
+# 密码
+jdbc.password=
+
+# 初始化连接数
+jdbc.initialSize=1
+# 最小空闲连接数
+jdbc.minIdle=1
+# 最大空闲连接数
+jdbc.maxIdle=15
+# 最大并发连接数
+jdbc.maxActive=20
+# 获取连接等待超时的时间
+jdbc.maxWait = 60000
+# 超过时间限制是否回收
+jdbc.removeAbandoned =true
+# 超过时间限制多长；单位：秒
+jdbc.removeAbandonedTimeout=1800
+# 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+jdbc.timeBetweenEvictionRunsMillis=60000
+#配置一个连接在池中最小生存的时间，单位是毫秒
+jdbc.minEvictableIdleTimeMillis = 300000
+# 用来检测连接是否有效的sql，要求是一个查询语句
+jdbc.validationQuery=SELECT 'x'
+# 申请连接的时候检测
+jdbc.testWhileIdle=true
+# 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+jdbc.testOnBorrow=false
+jdbc.testOnReturn=false
+
+#####################jedis连接
+jedis.url=221.122.16.113
+jedis.port=6379
+

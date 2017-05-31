@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.useribm.UserPurchaseCapacityMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.UserPurchaseCapacity" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="capacity_id" property="capacityId" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="pay_time" property="payTime" jdbcType="BIGINT" />
+    <result column="mature_time" property="matureTime" jdbcType="BIGINT" />
+    <result column="price" property="price" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, capacity_id, add_time, pay_time, mature_time, price, state
+  </sql>
+  
+</mapper>

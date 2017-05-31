@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.user.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.User" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="register_time" property="registerTime" jdbcType="BIGINT" />
+    <result column="phone" property="phone" jdbcType="BIGINT" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="SMALLINT" />
+    <result column="sex" property="sex" jdbcType="SMALLINT" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, username, password, state, register_time, phone, email, age, sex, icon, type
+  </sql>
+  
+  <!-- 根据手机号查询用户 -->
+  <select id="selectUserByP" resultType="com.sspaas.sspaascloud.entity.appmng.User" parameterType="java.lang.Long" >
+    select 
+    	*
+    from user
+    where phone = #{phone,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 根据邮箱查询用户 -->
+  <select id="selectUserByE" resultType="com.sspaas.sspaascloud.entity.appmng.User" parameterType="java.lang.String" >
+    select 
+    	*
+    from user
+    where email = #{email,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 添加用户(用户注册) -->
+  <insert id="addUser" useGeneratedKeys="true" keyProperty="userId" parameterType="com.sspaas.sspaascloud.entity.appmng.User" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="registerTime != null" >
+        register_time,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="registerTime != null" >
+        #{registerTime,jdbcType=BIGINT},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=SMALLINT},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=SMALLINT},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据用户手机号修改用户密码 -->
+  <update id="passwordBack" parameterType="com.sspaas.sspaascloud.entity.appmng.User" >
+    update user
+    <set >
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where phone = #{phone,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 个人用户信息 -->
+	<select id="getUserInfo" resultMap="BaseResultMap"
+		parameterType="java.util.Map">
+		select
+		*
+		from user
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 修改密码 -->
+	<update id="upPassword" parameterType="java.util.Map">
+		update user
+		set 
+		password = #{password,jdbcType=VARCHAR}
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 修改头像 -->
+	<update id="upUserIcon" parameterType="java.util.Map">
+		update user
+		set 
+		icon = #{icon,jdbcType=VARCHAR}
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 修改用户信息 -->
+	<update id="upUserInfo" parameterType="java.util.Map">
+		update user
+		<set>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=BIGINT},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="age != null">
+				age = #{age,jdbcType=SMALLINT},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=SMALLINT},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.User" >
+    insert into user (user_id, username, password, 
+      state, register_time, phone, 
+      email, age, sex, 
+      icon)
+    values (#{userId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{state,jdbcType=TINYINT}, #{registerTime,jdbcType=BIGINT}, #{phone,jdbcType=BIGINT}, 
+      #{email,jdbcType=VARCHAR}, #{age,jdbcType=SMALLINT}, #{sex,jdbcType=SMALLINT}, 
+      #{icon,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.User" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="registerTime != null" >
+        register_time,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="registerTime != null" >
+        #{registerTime,jdbcType=BIGINT},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=SMALLINT},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=SMALLINT},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.User" >
+    update user
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="registerTime != null" >
+        register_time = #{registerTime,jdbcType=BIGINT},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=SMALLINT},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=SMALLINT},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.User" >
+    update user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
+      register_time = #{registerTime,jdbcType=BIGINT},
+      phone = #{phone,jdbcType=BIGINT},
+      email = #{email,jdbcType=VARCHAR},
+      age = #{age,jdbcType=SMALLINT},
+      sex = #{sex,jdbcType=SMALLINT},
+      icon = #{icon,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

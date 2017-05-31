@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.file.FileTypeMapper">
+	<resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.FileType">
+		<id column="file_type_id" property="fileTypeId" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="add_time" property="addTime" jdbcType="BIGINT" />
+		<result column="sort" property="sort" jdbcType="SMALLINT" />
+		<result column="state" property="state" jdbcType="SMALLINT" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		file_type_id, parent_id, name, icon, add_time, state
+	</sql>
+
+	<!-- 查询所有文件类型 -->
+	<select id="findAllFileType" resultType="java.util.Map"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select ft.file_type_id as
+		fileTypeId,ft.name,ft.icon,ft.add_time as addTime,ft.sort,ft.state,
+		(select f.name from file_type f where f.file_type_id=ft.parent_id) as
+		parentName,ft.parent_id as parentId
+		from file_type ft
+		
+		<if test="map.parentId != null and map.parentId != ''">
+	        where ft.parent_id=#{map.parentId,jdbcType=BIGINT}
+	    </if>
+		
+		order by ${sidx} ${sord} LIMIT
+		#{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT}
+	</select>
+
+	<!-- 查询所有文件类型数量 -->
+	<select id="findAllFileTypeCount" resultType="java.lang.Integer"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select count(*)
+		from file_type
+		<if test="map.parentId != null and map.parentId != ''">
+	        where parent_id=#{map.parentId,jdbcType=BIGINT}
+	    </if>
+	</select>
+
+	<!-- 查询所有文件类型根目录 -->
+	<select id="getTypeRoot" resultType="java.util.Map">
+		select ft.file_type_id as
+		fileTypeId,ft.name
+		from file_type ft where ft.parent_id=0
+		
+	</select>
+	
+	
+	<!-- 添加 -->
+	<insert id="addType" parameterType="com.sspaas.sspaascloud.entity.FileType" >
+    insert into file_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="sort != null" >
+        sort
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=SMALLINT}
+      </if>
+    </trim>
+  </insert>
+	
+	
+	<!-- 修改 -->
+	<update id="updateType" parameterType="com.sspaas.sspaascloud.entity.FileType" >
+    update file_type
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=SMALLINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT}
+      </if>
+    </set>
+    where file_type_id = #{fileTypeId,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteType" parameterType="java.lang.Integer" >
+    delete from file_type
+    where file_type_id = #{fileTypeId,jdbcType=INTEGER}
+  </delete>
+
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.user.UserCapacityMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.UserCapacity" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="total_capacity" property="totalCapacity" jdbcType="VARCHAR" />
+    <result column="userd_capacity" property="userdCapacity" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, total_capacity, userd_capacity
+  </sql>
+  
+</mapper>

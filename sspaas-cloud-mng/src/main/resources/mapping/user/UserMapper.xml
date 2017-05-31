@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.user.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.User" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="register_time" property="registerTime" jdbcType="BIGINT" />
+    <result column="phone" property="phone" jdbcType="BIGINT" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="SMALLINT" />
+    <result column="sex" property="sex" jdbcType="SMALLINT" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, username, password, state, register_time, phone, email, age, sex, icon, type
+  </sql>
+  
+  <!-- 查询app用户总数 -->
+  <select id="total" resultType="java.lang.Integer" parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+    select 
+    	count(*)
+    from user u,user_capacity uc
+    where u.user_id = uc.user_id and u.state = 1
+    	<if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.email != null and map.email != ''">
+	        and u.email like '%${map.email}%'
+	    </if>
+	    
+	    <if test="map.phone != null and map.phone != 0">
+	        and u.phone like '%${map.phone}%'
+	    </if>
+  </select>
+  
+  <!-- 登录记录总数 -->
+  <select id="loginRecordTotal" resultType="java.lang.Integer" parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+    select 
+    	count(*)
+    from user u,user_login_record ul
+    where u.user_id = ul.user_id and u.state = 1
+    	<if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.email != null and map.email != ''">
+	        and u.email like '%${map.email}%'
+	    </if>
+	    
+	    <if test="map.phone != null and map.phone != 0">
+	        and u.phone like '%${map.phone}%'
+	    </if>
+  </select>
+  
+  <!-- 分页查询app用户信息 -->
+  <select id="selectAppUserList" resultType="java.util.HashMap" parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+    select 
+    	u.user_id as userId,u.username,u.state,u.state as status,u.register_time as registerTime,u.phone,u.email,u.age,u.sex,u.icon,u.type,
+    	uc.total_capacity as totalCapacity,uc.userd_capacity as userdCapacity
+    from user u,user_capacity uc
+    where u.user_id = uc.user_id and u.state = 1
+    	<if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.email != null and map.email != ''">
+	        and u.email like '%${map.email}%'
+	    </if>
+	    
+	    <if test="map.phone != null and map.phone != 0">
+	        and u.phone like '%${map.phone}%'
+	    </if>
+	    
+    	<if test="sidx != null and sidx != ''">
+          ORDER BY ${sidx} ${sord}
+        </if>
+    limit #{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT};
+  </select>
+  
+  <!-- 分页查询用户登录记录 -->
+  <select id="selectLoginRecord" resultType="java.util.HashMap" parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+    select 
+    	u.user_id as userId,u.username,u.phone,u.email,u.type,
+    	ul.login_time as loginTime,ul.quit_time as quitTime,ul.login_place as loginPlace,ul.login_ip as loginIp,ul.equipment,ul.uuid
+    from user u,user_login_record ul
+    where u.user_id = ul.user_id and u.state = 1
+    	<if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.email != null and map.email != ''">
+	        and u.email like '%${map.email}%'
+	    </if>
+	    
+	    <if test="map.phone != null and map.phone != 0">
+	        and u.phone like '%${map.phone}%'
+	    </if>
+	    
+    	<if test="sidx != null and sidx != ''">
+          ORDER BY ${sidx} ${sord}
+        </if>
+    limit #{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT};
+  </select>
+  
+  <!-- 修改用户状态 -->
+  <update id="editUser" >
+    update user set state = #{1} where user_id = #{0}
+  </update>
+ 
+</mapper>

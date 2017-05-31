@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.report.ReportMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.Report" >
+    <id column="report_id" property="reportId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="report_type_id" property="reportTypeId" jdbcType="VARCHAR" />
+    <result column="descript" property="descript" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    report_id, user_id, file_id, report_type_id, descript, add_time, state
+  </sql>
+  
+  <!-- 添加举报记录 -->
+  <insert id="addReport" parameterType="com.sspaas.sspaascloud.entity.appmng.Report" >
+    insert into report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="reportId != null" >
+        report_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="fileId != null" >
+        file_id,
+      </if>
+      <if test="reportTypeId != null" >
+        report_type_id,
+      </if>
+      <if test="descript != null" >
+        descript,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="reportId != null" >
+        #{reportId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null" >
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="reportTypeId != null" >
+        #{reportTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="descript != null" >
+        #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from report
+    where report_id = #{reportId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from report
+    where report_id = #{reportId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.Report" >
+    insert into report (report_id, user_id, file_id, 
+      report_type_id, descript, add_time, 
+      state)
+    values (#{reportId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{fileId,jdbcType=INTEGER}, 
+      #{reportTypeId,jdbcType=VARCHAR}, #{descript,jdbcType=VARCHAR}, #{addTime,jdbcType=BIGINT}, 
+      #{state,jdbcType=SMALLINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.Report" >
+    insert into report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="reportId != null" >
+        report_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="fileId != null" >
+        file_id,
+      </if>
+      <if test="reportTypeId != null" >
+        report_type_id,
+      </if>
+      <if test="descript != null" >
+        descript,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="reportId != null" >
+        #{reportId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null" >
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="reportTypeId != null" >
+        #{reportTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="descript != null" >
+        #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.Report" >
+    update report
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null" >
+        file_id = #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="reportTypeId != null" >
+        report_type_id = #{reportTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="descript != null" >
+        descript = #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where report_id = #{reportId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.Report" >
+    update report
+    set user_id = #{userId,jdbcType=INTEGER},
+      file_id = #{fileId,jdbcType=INTEGER},
+      report_type_id = #{reportTypeId,jdbcType=VARCHAR},
+      descript = #{descript,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=BIGINT},
+      state = #{state,jdbcType=SMALLINT}
+    where report_id = #{reportId,jdbcType=INTEGER}
+  </update>
+</mapper>

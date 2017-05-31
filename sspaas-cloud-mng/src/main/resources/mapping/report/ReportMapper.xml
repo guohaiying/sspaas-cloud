@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.report.ReportMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.Report" >
+    <id column="report_id" property="reportId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="report_type_id" property="reportTypeId" jdbcType="VARCHAR" />
+    <result column="descript" property="descript" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    report_id, user_id, file_id, report_type_id, descript, add_time, state
+  </sql>
+  <!-- 查询所有举报资源 -->
+  <select id="findAllReports" resultType="java.util.Map"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select * from( 
+			select
+			  re.report_id as reportId,
+			  re.user_id as userId,
+			  u.username as userName,
+			  re.file_id as fileId,
+			  fl.old_name as fileName,
+			  rt.name as reportTypeName,
+			  re.report_type_id as reportTypeId,
+			  re.descript as descript,
+			  re.add_time as addTime,
+			  re.state as state,
+			  ft.name as fileTypeName,
+			  ft. file_type_id as fileTypeId
+			from report re
+			  left join report_type rt
+			    ON re.report_type_id = rt.report_type_id
+			  left join file fl
+			    on fl.file_id = re.file_id
+			  left join file_type ft
+			    on fl.file_type_id = ft.file_type_id
+			  left join user u
+		  			on u.user_id = re.user_id) as report
+		<where>
+		    <if test="map.userId != null and map.userId != ''">
+		        report.userId=#{map.userId,jdbcType=BIGINT}
+		    </if>
+		    <if test="map.reportTypeId != null and map.reportTypeId != ''">
+		        and report.reportTypeId = #{map.reportTypeId,jdbcType=INTEGER}
+		    </if>
+		    <if test="map.fileTypeId != null and map.fileTypeId != ''">
+		        and report.fileTypeId = #{map.fileTypeId,jdbcType=INTEGER}
+		    </if>
+		    <if test="map.state != null and map.state != ''">
+		        and report.state = #{map.state,jdbcType=SMALLINT}
+		    </if>
+		    
+		    <if test="map.userName != null and map.userName != ''">
+		        and report.userName like '%${map.userName}%'
+		    </if>
+		    
+		    <if test="map.fileName != null and map.fileName != ''">
+		        and report.fileName like '%${map.fileName}%'
+		    </if>
+		  </where>  
+		order by ${sidx} ${sord} LIMIT
+		#{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT}
+	</select>
+  
+  <!-- 查询所有举报资源总数 -->
+  <select id="findAllReportsCount" resultType="java.lang.Integer"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select count(1) as count from(
+			select 
+			  re.report_id as reportId,
+			  re.user_id as userId,
+			  u.username as userName,
+			  re.file_id as fileId,
+			  fl.old_name as fileName,
+			  rt.name as reportTypeName,
+			  re.descript as descript,
+			  re.add_time as addTime,
+			  re.state as state,
+			  ft.name as fileTypeName,
+			  ft. file_type_id as fileTypeId  
+			from report re
+			  left join report_type rt
+			    on re.report_type_id = rt.report_type_id
+			  left join file fl
+			    on fl.file_id = re.file_id
+			  left join file_type ft
+			    on fl.file_type_id = ft.file_type_id
+			  left join user u
+			    on u.user_id = re.user_id) as report
+		 <where>
+			<if test="map.userId != null and map.userId != ''">
+		        report.userId=#{map.userId,jdbcType=BIGINT}
+		    </if>
+	
+		    <if test="map.fileTypeId != null and map.fileTypeId != ''">
+		        and report.fileTypeId = #{map.fileTypeId,jdbcType=INTEGER}
+		    </if>
+		    
+		    <if test="map.userName != null and map.userName != ''">
+		        and report.userName like '%${map.userName}%'
+		    </if>
+		    
+		    <if test="map.fileName != null and map.fileName != ''">
+		        and report.fileName like '%${map.fileName}%'
+		    </if>
+		 </where>
+	</select>
+	<!-- 举报文件所有类型 -->
+	<select id="findAllFileType" resultType="java.util.Map">
+	
+	select ft.file_type_id as fileTypeId ,ft.name as name from report as re  
+		left join file as fl 
+			on  re.file_id = fl.file_id 
+		left join  file_type ft  
+			on fl.file_type_id = ft.file_type_id
+	
+	</select>
+	<select id="findReportFile" resultType="com.sspaas.sspaascloud.entity.ReportFile">
+		select 
+			fl.file_id as fileId,
+			fl.old_name as oldName,
+			fl.upload_name as uploadName, 
+			fl.state as fileState,
+			fl.add_time as addTime,
+			fl.user_id as userID,
+			us.username as userName,  
+			us.state as userState 
+			from file as fl 
+			left join user as us 
+				on fl.user_id = us.user_id 
+			where 
+			fl.file_id = #{fileId,jdbcType=INTEGER}
+	</select>
+	<update id="updateReportState">
+		update report set state = #{reportState,jdbcType=SMALLINT} where report_id =#{reportId,jdbcType=INTEGER}
+	</update>
+	<update id="updateFileState">
+		update file set state = #{fileState,jdbcType=SMALLINT} where file_id =#{fileId,jdbcType=INTEGER}
+	</update>
+	<update id="updateUserState">
+	update user set state = #{userState,jdbcType=SMALLINT} where user_id =#{userId,jdbcType=INTEGER}
+	</update>
+	
+</mapper>

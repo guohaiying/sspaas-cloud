@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.file.FileMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.File" >
+    <id column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="old_name" property="oldName" jdbcType="VARCHAR" />
+    <result column="upload_name" property="uploadName" jdbcType="VARCHAR" />
+    <result column="file_type_id" property="fileTypeId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
+    <result column="size" property="size" jdbcType="BIGINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="delete_time" property="deleteTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+    <result column="MD5" property="md5" jdbcType="VARCHAR" />
+    <result column="file_path" property="filePath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    file_id, user_id, old_name, upload_name, file_type_id, type, parent_id, size, add_time, 
+    delete_time, update_time, state, MD5, file_path
+  </sql>
+  
+  <!-- 获取文件列表 -->
+  <select id="getFileList" resultType="java.util.Map" parameterType="java.util.Map" >
+    select f.file_id as fileId,f.old_name as name,f.add_time as addTime,f.size,ft.icon,f.type,f.parent_id as parentId,f.MD5,ft.parent_id as fileTypeId
+    from file f,file_type ft where f.file_type_id=ft.file_type_id 
+    <if test="state != null" >
+        and f.state=#{state,jdbcType=INTEGER}
+     </if>
+     <if test="userId != null" >
+        and f.user_id=#{userId,jdbcType=INTEGER} 
+     </if>
+     <if test="parentId != null" >
+        and f.parent_id=#{parentId,jdbcType=INTEGER}
+     </if>
+     <if test="name != null" >
+        and f.old_name like '%${name}%'
+     </if>
+     <if test="fileTypeId != null" >
+        and f.file_type_id in (select file_type_id from file_type where parent_id=#{fileTypeId})
+     </if>
+     <if test="sort != null" >
+     	ORDER BY ${sort} DESC 
+     </if>
+     
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="fileId"  parameterType="com.sspaas.sspaascloud.entity.appmng.File" >
+    insert into file (file_id, user_id, old_name, 
+      upload_name, file_type_id, type, 
+      parent_id, size, add_time, 
+      delete_time, update_time, state, 
+      MD5, file_path)
+    values (#{fileId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{oldName,jdbcType=VARCHAR}, 
+      #{uploadName,jdbcType=VARCHAR}, #{fileTypeId,jdbcType=INTEGER}, #{type,jdbcType=SMALLINT}, 
+      #{parentId,jdbcType=BIGINT}, #{size,jdbcType=BIGINT}, #{addTime,jdbcType=BIGINT}, 
+      #{deleteTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{state,jdbcType=SMALLINT}, 
+      #{md5,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertAndGetFileId" useGeneratedKeys="true" keyProperty="fileId" parameterType="com.sspaas.sspaascloud.entity.appmng.File" >
+    insert into file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        file_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="oldName != null" >
+        old_name,
+      </if>
+      <if test="uploadName != null" >
+        upload_name,
+      </if>
+      <if test="fileTypeId != null" >
+        file_type_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="md5 != null" >
+        MD5,
+      </if>
+      <if test="filePath != null" >
+        file_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="oldName != null" >
+        #{oldName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadName != null" >
+        #{uploadName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileTypeId != null" >
+        #{fileTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.File" >
+    insert into file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        file_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="oldName != null" >
+        old_name,
+      </if>
+      <if test="uploadName != null" >
+        upload_name,
+      </if>
+      <if test="fileTypeId != null" >
+        file_type_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="md5 != null" >
+        MD5,
+      </if>
+      <if test="filePath != null" >
+        file_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="oldName != null" >
+        #{oldName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadName != null" >
+        #{uploadName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileTypeId != null" >
+        #{fileTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.File" >
+    update file
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="oldName != null" >
+        old_name = #{oldName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadName != null" >
+        upload_name = #{uploadName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileTypeId != null" >
+        file_type_id = #{fileTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="size != null" >
+        size = #{size,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="md5 != null" >
+        MD5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        file_path = #{filePath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.File" >
+    update file
+    set user_id = #{userId,jdbcType=INTEGER},
+      old_name = #{oldName,jdbcType=VARCHAR},
+      upload_name = #{uploadName,jdbcType=VARCHAR},
+      file_type_id = #{fileTypeId,jdbcType=INTEGER},
+      type = #{type,jdbcType=SMALLINT},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      size = #{size,jdbcType=BIGINT},
+      add_time = #{addTime,jdbcType=BIGINT},
+      delete_time = #{deleteTime,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=BIGINT},
+      state = #{state,jdbcType=SMALLINT},
+      MD5 = #{md5,jdbcType=VARCHAR},
+      file_path = #{filePath,jdbcType=VARCHAR}
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <!-- 通过 oldName parentId type userId 查找文件-->
+  <select id="findFileByOldName" resultMap="BaseResultMap">
+	select
+    <include refid="Base_Column_List" />
+    from file
+    where old_name =#{oldName} 
+    and parent_id = #{parentId} 
+    and type = #{type} 
+    and user_id =#{userId}
+    and state = 1
+  </select>
+  
+  <!-- 通过 parentId  userId 查找文件-->
+  <select id="findFilesByParentId" resultMap="BaseResultMap">
+	select
+    <include refid="Base_Column_List" />
+    from file
+    where parent_id = #{fileId} 
+    and user_id =#{userId}
+  </select>
+  <!-- 通过 userId 和  fileId 查找文件 -->
+  <select id="selectByFileIdAndUserID" resultMap="BaseResultMap">
+	select
+    <include refid="Base_Column_List" />
+    from file
+    where file_id = #{fileId} 
+    and user_id =#{userId}
+  </select>
+  
+  <!-- 清除回收站超过7天的文件 -->
+  <delete id="deleteExceedSevenFile"  parameterType="java.util.Map" >
+    delete from file
+    where user_id = #{userId,jdbcType=INTEGER}
+	and state = 2 and (TO_DAYS(NOW())-TO_DAYS(from_unixtime(delete_time/1000, '%Y-%m-%d %H:%i:%S'))>7 or delete_time is NULL)
+  </delete>
+  
+  
+  
+  
+  
+  
+</mapper>

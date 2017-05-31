@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.user.UserCapacityMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.UserCapacity" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="total_capacity" property="totalCapacity" jdbcType="BIGINT" />
+    <result column="userd_capacity" property="userdCapacity" jdbcType="FLOAT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, total_capacity, userd_capacity
+  </sql>
+  
+  <!-- 初始化用户总容量 -->
+  <insert id="addUserCapacity" parameterType="com.sspaas.sspaascloud.entity.appmng.UserCapacity" >
+    insert into user_capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="totalCapacity != null" >
+        total_capacity,
+      </if>
+      <if test="userdCapacity != null" >
+        userd_capacity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="totalCapacity != null" >
+        #{totalCapacity,jdbcType=BIGINT},
+      </if>
+      <if test="userdCapacity != null" >
+        #{userdCapacity,jdbcType=FLOAT},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <!-- 获取用户已用容量和总容量 -->
+  <select id="userCapacity" resultType="java.util.HashMap" parameterType="java.lang.Integer" >
+    select 
+    user_id as userId,total_capacity as totalCapacity,userd_capacity as userdCapacity
+    from user_capacity
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 更新用户容量大小 -->
+  <update id="updateUserCapacityByUserId" >
+    update user_capacity
+    set total_capacity = total_capacity + (select size from capacity where capacity_id = #{1,jdbcType=INTEGER})
+    where user_id = #{0,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新用户容量大小 -->
+  <update id="updateCapacityByUserId" >
+    update user_capacity
+    set total_capacity = total_capacity - (select size from capacity where capacity_id = #{1,jdbcType=INTEGER})
+    where user_id = #{0,jdbcType=INTEGER}
+  </update>
+  
+  <!--更新用户已用容量  -->
+  <update id="updateCapacity">
+  	update user_capacity 
+  	set userd_capacity =#{userdCapacity} 
+  	where user_id = #{userId} 
+  </update>  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_capacity
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.UserCapacity" >
+    insert into user_capacity (user_id, total_capacity, userd_capacity
+      )
+    values (#{userId,jdbcType=INTEGER}, #{totalCapacity,jdbcType=BIGINT}, #{userdCapacity,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.UserCapacity" >
+    insert into user_capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="totalCapacity != null" >
+        total_capacity,
+      </if>
+      <if test="userdCapacity != null" >
+        userd_capacity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="totalCapacity != null" >
+        #{totalCapacity,jdbcType=BIGINT},
+      </if>
+      <if test="userdCapacity != null" >
+        #{userdCapacity,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.UserCapacity" >
+    update user_capacity
+    <set >
+      <if test="totalCapacity != null" >
+        total_capacity = #{totalCapacity,jdbcType=BIGINT},
+      </if>
+      <if test="userdCapacity != null" >
+        userd_capacity = #{userdCapacity,jdbcType=BIGINT},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.UserCapacity" >
+    update user_capacity
+    set total_capacity = #{totalCapacity,jdbcType=BIGINT},
+      userd_capacity = #{userdCapacity,jdbcType=BIGINT}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+</mapper>

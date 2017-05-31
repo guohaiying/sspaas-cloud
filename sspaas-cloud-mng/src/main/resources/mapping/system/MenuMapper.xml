@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.menu.MenuMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.Menu" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="menu_type" property="menuType" jdbcType="TINYINT" />
+    <result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+    <result column="menu_icon" property="menuIcon" jdbcType="VARCHAR" />
+    <result column="menu_url" property="menuUrl" jdbcType="VARCHAR" />
+    <result column="father_id" property="fatherId" jdbcType="VARCHAR" />
+    <result column="button_id" property="buttonId" jdbcType="VARCHAR" />
+  </resultMap>
+
+    <!-- 查询菜单表的一级菜单的总数 -->
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*) from menu where menu_type = 0
+    </select>
+
+    <!-- 查询所有菜单 -->
+    <select id="findMenu" resultMap="BaseResultMap">
+        select * from menu
+    </select>
+
+    <!-- 查询指定父级id，并且不是按钮的菜单 -->
+    <select id="selectMenu" resultType="java.lang.String" parameterType="java.lang.String">
+        select id from menu
+        where father_id = #{fatherId,jdbcType=VARCHAR} and menu_type != 2
+    </select>
+
+    <!-- 查询菜单的类型（0根目录  1菜单  2按钮） -->
+    <select id="selectMenuType" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select menu_type from menu
+        where id = #{fatherId,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 添加菜单 -->
+    <insert id="addMenu" parameterType="com.sspaas.sspaascloud.entity.Menu" >
+        insert into menu
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="menuType != null" >
+                menu_type,
+            </if>
+            <if test="menuName != null" >
+                menu_name,
+            </if>
+            <if test="menuIcon != null" >
+                menu_icon,
+            </if>
+            <if test="menuUrl != null" >
+                menu_url,
+            </if>
+            <if test="fatherId != null" >
+                father_id,
+            </if>
+            <if test="buttonId != null" >
+                button_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="menuType != null" >
+                #{menuType,jdbcType=TINYINT},
+            </if>
+            <if test="menuName != null" >
+                #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuIcon != null" >
+                #{menuIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="menuUrl != null" >
+                #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="fatherId != null" >
+                #{fatherId,jdbcType=VARCHAR},
+            </if>
+            <if test="buttonId != null" >
+                #{buttonId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 修改菜单 -->
+    <update id="upMenu" parameterType="com.sspaas.sspaascloud.entity.Menu" >
+        update menu
+        <set >
+            <if test="menuType != null" >
+                menu_type = #{menuType,jdbcType=TINYINT},
+            </if>
+            <if test="menuName != null" >
+                menu_name = #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuIcon != null" >
+                menu_icon = #{menuIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="menuUrl != null" >
+                menu_url = #{menuUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="fatherId != null" >
+                father_id = #{fatherId,jdbcType=VARCHAR},
+            </if>
+            <if test="buttonId != null" >
+                button_id = #{buttonId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+
+
+    <!-- 删除菜单 -->
+    <delete id="deleteMenu" parameterType="java.util.List" >
+        delete from menu
+        where id in (
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from menu
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.Menu" >
+    insert into menu (id, menu_type, menu_name, 
+      menu_icon, menu_url, father_id, button_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{menuType,jdbcType=TINYINT}, #{menuName,jdbcType=VARCHAR}, 
+      #{menuIcon,jdbcType=VARCHAR}, #{menuUrl,jdbcType=VARCHAR}, #{fatherId,jdbcType=VARCHAR},
+      #{buttonId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.Menu" >
+    update menu
+    set menu_type = #{menuType,jdbcType=TINYINT},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_icon = #{menuIcon,jdbcType=VARCHAR},
+      menu_url = #{menuUrl,jdbcType=VARCHAR},
+      father_id = #{fatherId,jdbcType=VARCHAR},
+      button_id = #{buttonId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, menu_type, menu_name, menu_icon, menu_url, father_id, button_id
+    from menu
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, menu_type, menu_name, menu_icon, menu_url, father_id
+    from menu
+  </select>
+  <select id="findUserButtonMenu" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select m.menu_name as menuName,m.menu_icon as menuIcon,m.button_id as buttonId
+    from menu m,permissions p where m.id=p.menu_id and p.role_id=#{0} and m.menu_type=2 and m.father_id = #{1}
+  </select>
+
+
+
+  </mapper>

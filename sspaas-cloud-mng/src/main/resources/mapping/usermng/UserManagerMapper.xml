@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.useribm.UserManagerMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.UserManager" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="fullname" property="fullname" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+    <result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+  </resultMap>
+
+    <!-- 登录查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="com.sspaas.sspaascloud.entity.UserManager" >
+        select
+        *
+        from user_manager
+        where login_name = #{loginName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 检查用户名唯一性 -->
+    <select id="checkName" resultMap="BaseResultMap" parameterType="com.sspaas.sspaascloud.entity.UserManager" >
+        select
+        *
+        from user_manager
+        where login_name = #{loginName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 查询总数-->
+    <select id="selectTotalPage" resultType="java.lang.Integer">
+        select count(*) from user_manager u,role r
+        where u.role_id = r.role_id
+    </select>
+
+    <!-- 分页查询-->
+    <select id="selectePaging" resultType="java.util.HashMap" parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+        select u.user_id as userId,u.login_name as loginName,u.password as password,u.fullname as fullname,u.mobile as mobile,u.email as email,
+        u.creat_time as creatTime,u.login_time as loginTime,u.last_login_time as lastLoginTime,u.count as count,r.role_name as roleName,r.role_id as roleId
+        from user_manager u,role r
+        where u.role_id = r.role_id
+        limit #{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT};
+    </select>
+
+    <!-- 根据用户id查询用户 -->
+    <select id="findUserById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select *
+        from user_manager
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 更新登陆时间 -->
+    <update id="updateUser" parameterType="com.sspaas.sspaascloud.entity.UserManager"  >
+        update user_manager
+        set
+        login_time = #{loginTime,jdbcType=TIMESTAMP},
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+        count = #{count,jdbcType=BIGINT}
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 更新用户信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.UserManager" >
+        update user_manager
+        <set >
+            <if test="loginName != null" >
+                login_name = #{loginName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="fullname != null" >
+                fullname = #{fullname,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null" >
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null" >
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="creatTime != null" >
+                creat_time = #{creatTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loginTime != null" >
+                login_time = #{loginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginTime != null" >
+                last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="count != null" >
+                count = #{count,jdbcType=BIGINT},
+            </if>
+            <if test="roleId != null" >
+                role_id = #{roleId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 用户注册 -->
+    <insert id="saveUserManager" parameterType="com.sspaas.sspaascloud.entity.UserManager" useGeneratedKeys="true" keyProperty="userId"  >
+        insert into user_manager (user_id, login_name, password,
+        fullname, mobile, email,
+        creat_time, login_time, last_login_time,
+        count,role_id)
+        values (#{userId,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{fullname,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+        #{creatTime,jdbcType=TIMESTAMP}, #{loginTime,jdbcType=TIMESTAMP}, #{lastLoginTime,jdbcType=TIMESTAMP},
+        #{count,jdbcType=BIGINT},#{roleId,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 删除用户 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from user_manager
+        where user_id = #{userId,jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 修改密码 -->
+    <update id="updateUserPassword" parameterType="com.sspaas.sspaascloud.entity.UserManager">
+        update user_manager
+        set
+        password=#{password,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.UserManager" >
+    insert into user_manager (user_id, login_name, password, 
+      fullname, mobile, email, 
+      creat_time, login_time, last_login_time, 
+      count)
+    values (#{userId,jdbcType=INTEGER}, #{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{fullname,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{creatTime,jdbcType=TIMESTAMP}, #{loginTime,jdbcType=TIMESTAMP}, #{lastLoginTime,jdbcType=TIMESTAMP}, 
+      #{count,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.UserManager" >
+    update user_manager
+    set login_name = #{loginName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      fullname = #{fullname,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      login_time = #{loginTime,jdbcType=TIMESTAMP},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      count = #{count,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select user_id, login_name, password, fullname, mobile, email, creat_time, login_time, 
+    last_login_time, count
+    from user_manager
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select user_id, login_name, password, fullname, mobile, email, creat_time, login_time, 
+    last_login_time, count
+    from user_manager
+  </select>
+</mapper>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	<!-- 自动扫描包 -->
+	<context:component-scan base-package="com.sspaas.sspaascloud.service" />
+	<!--引用配置文件 -->
+	<!-- <context:property-placeholder location="classpath:db.properties" /> -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:db.properties</value>
+				<value>classpath:openstackswift.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 配置DataSource -->
+	<bean class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+		destroy-method="close" id="dataSources">
+		<!-- 数据库驱动 -->
+		<property name="driverClassName" value="${jdbc.driverClass}"></property>
+		<!-- 数据库连接 -->
+		<property name="url" value="${jdbc.url}"></property>
+		<!-- 数据库用户名 -->
+		<property name="username" value="${jdbc.username}"></property>
+		<!-- 数据库密码 -->
+		<property name="password" value="${jdbc.password}"></property>
+		<!-- 初始化连接数 -->
+		<property name="initialSize" value="${jdbc.initialSize}"></property>
+		<!-- 最小空闲连接数 -->
+		<property name="minIdle" value="${jdbc.minIdle}"></property>
+		<!-- 最大空闲连接数 -->
+		<property name="maxIdle" value="${jdbc.maxIdle}"></property>
+		<!-- 最大并发连接数 -->
+		<property name="maxActive" value="${jdbc.maxActive}" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${jdbc.maxWait}" />
+		<!-- 超过时间限制是否回收 -->
+		<property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
+		<!-- 超过时间限制多长；单位：秒 -->
+		<property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+		<!-- 用来检测连接是否有效的sql，要求是一个查询语句 -->
+		<property name="validationQuery" value="${jdbc.validationQuery}" />
+		<!-- 申请连接的时候检测 -->
+		<property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+		<!-- 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+		<!-- 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+		<property name="testOnReturn" value="${jdbc.testOnReturn}" />
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小(打开：true 关闭 false) -->
+		<property name="poolPreparedStatements" value="false" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="50" />
+		<!--属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有： 监控统计用的filter:stat 日志用的filter:log4j 防御SQL注入的filter:wall -->
+		<property name="filters" value="stat,wall" />
+	</bean>
+	<!-- 配置SessionFactory -->
+	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 配置数据源 -->
+		<property name="dataSource" ref="dataSources"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapping/*/*/*.xml" />
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.sspaas.sspaascloud.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sessionFactory" />
+	</bean>
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSources" />
+	</bean>
+	<!-- 配置事务通知属性 -->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED"
+				rollback-for="java.lang.Throwable" />
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Throwable" />
+			<tx:method name="create*" propagation="REQUIRED"
+				rollback-for="java.lang.Throwable" />
+			<tx:method name="insert*" propagation="REQUIRED"
+				rollback-for="java.lang.Throwable" />
+			<tx:method name="update*" propagation="REQUIRED"
+				rollback-for="java.lang.Throwable" />
+			<tx:method name="del*" propagation="REQUIRED" rollback-for="java.lang.Throwable" />
+			<tx:method name="remove*" propagation="REQUIRED"
+				rollback-for="java.lang.Throwable" />
+			<tx:method name="*" propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	 <!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	<!-- 设置pointCut表示那些方法要加入事务处理,便于保证数据的完整性(AOP配置) -->
+	<aop:config>
+		<aop:pointcut id="transactionPointcut"
+			expression="execution(* com.sspaas.sspaascloud.service.*.*.impl.*.*(..))" />
+		<aop:advisor pointcut-ref="transactionPointcut"
+			advice-ref="transactionAdvice" />
+	</aop:config>
+	<!-- 配置druid监控spring jdbc -->
+	<bean id="druid-stat-interceptor"
+		class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor"></bean>
+	<bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut"
+		scope="prototype">
+		<property name="patterns">
+			<list>
+				<value>com.sspaas.sspaascloud.service.*.*.impl</value>
+			</list>
+		</property>
+	</bean>
+	<aop:config>
+		<aop:advisor advice-ref="druid-stat-interceptor"
+			pointcut-ref="druid-stat-pointcut" />
+	</aop:config>
+	<aop:config>
+		<aop:pointcut id="myPointcut"
+			expression="execution(* com.sspaas.sspaascloud.service.*.*.impl.*.*(..))" />
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="myPointcut" />
+	</aop:config>
+
+
+
+	<!-- jedis pool配置 (redis缓存) 单机版-->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+        	<!-- 最大连接数 -->
+        <property name="maxTotal" value="15" />
+        	<!-- 最大空闲连接数 -->
+        <property name="maxIdle" value="10" />  
+        	<!-- 初始化连接数   -->
+        <property name="minIdle" value="10"/>  
+       	 <!-- 最大等待时间   -->
+        <property name="maxWaitMillis" value="1000" />  
+        	<!-- 对拿到的connection进行validateObject校验   -->
+        <property name="testOnBorrow" value="true" />  
+        	<!-- 在进行returnObject对返回的connection，是否提前进行validate操作   -->
+        <property name="testOnReturn" value="false" />  
+        	<!-- 在空闲时检查有效性, 默认false  -->
+        <property name="testWhileIdle" value="false" />  
+    </bean>
+	
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool"
+		destroy-method="destroy">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="" />
+		<constructor-arg index="2" value="" />
+		<constructor-arg index="3" value="10000" type="int" />
+		<constructor-arg index="4" value="" ></constructor-arg>
+	</bean>
+	
+	
+	<!-- redis节点配置 -->
+	<bean id="node1" class=" redis.clients.jedis.HostAndPort">
+		<constructor-arg name="host" value=""></constructor-arg>
+		<constructor-arg name="port" value=""></constructor-arg>
+	</bean>
+	<bean id="node2" class=" redis.clients.jedis.HostAndPort">
+		<constructor-arg name="host" value=""></constructor-arg>
+		<constructor-arg name="port" value=""></constructor-arg>
+	</bean>
+	<bean id="node3" class=" redis.clients.jedis.HostAndPort">
+		<constructor-arg name="host" value=""></constructor-arg>
+		<constructor-arg name="port" value=""></constructor-arg>
+	</bean>
+	<bean id="poolConfig" class=" org.apache.commons.pool2.impl.GenericObjectPoolConfig">
+		<property name="maxTotal" value="1000"></property>
+		<property name="maxIdle" value="50"></property>
+		<property name="minIdle" value="10"></property>
+	</bean>
+
+	<!-- 注入到redisCluster -->
+	<bean id="redisCluster" class="redis.clients.jedis.JedisCluster">
+		<constructor-arg name="jedisClusterNode">
+			<set>
+				<ref bean="node1" />
+				<ref bean="node2" />
+				<ref bean="node3" />
+			</set>
+		</constructor-arg>
+		<constructor-arg name="connectionTimeout" value="12000000"></constructor-arg>
+		<constructor-arg name="soTimeout" value="120000"></constructor-arg>
+		<constructor-arg name="maxAttempts" value="120000"></constructor-arg>
+		<constructor-arg name="password" value=""></constructor-arg>
+		<constructor-arg name="poolConfig" ref="poolConfig"></constructor-arg>
+	</bean>
+</beans>
+	

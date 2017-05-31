@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.file.FileTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.FileType" >
+    <id column="file_type_id" property="fileTypeId" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="sort" property="sort" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    file_type_id, parent_id, name, icon, add_time
+  </sql>
+  
+  <!-- 获取文件类型列表 -->
+  <select id="getFileTypeList" resultType="java.util.Map"  >
+  select file_type_id as fileTypeId,name,icon from file_type where parent_id = 0 and state=1 ORDER BY sort asc
+  </select>
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from file_type
+    where file_type_id = #{fileTypeId,jdbcType=INTEGER}
+  </select>
+	 <!-- SELECT file_type_id FROM file_type WHERE NAME =zip -->
+  <select id="selectByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select
+		file_type_id 
+		from file_type
+		where name = #{name}
+  </select>
+  <select id="getParentTypeId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  	select parent_id from file_type where file_type_id =#{fileTypeId}
+  
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from file_type
+    where file_type_id = #{fileTypeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.FileType" >
+    insert into file_type (file_type_id, name, icon, 
+      add_time)
+    values (#{fileTypeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.FileType" >
+    insert into file_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fileTypeId != null" >
+        file_type_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fileTypeId != null" >
+        #{fileTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.FileType" >
+    update file_type
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where file_type_id = #{fileTypeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.FileType" >
+    update file_type
+    set name = #{name,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=BIGINT}
+    where file_type_id = #{fileTypeId,jdbcType=INTEGER}
+  </update>
+</mapper>

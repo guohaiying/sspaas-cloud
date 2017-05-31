@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.appmng.user.UserPurchaseCapacityMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="capacity_id" property="capacityId" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="pay_time" property="payTime" jdbcType="BIGINT" />
+    <result column="mature_time" property="matureTime" jdbcType="BIGINT" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+    <result column="pay_state" property="payState" jdbcType="SMALLINT" />
+    <result column="channel" property="channel" jdbcType="SMALLINT" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, capacity_id, add_time, pay_time, mature_time, price, state, pay_state, channel, note, order_number
+  </sql>
+  
+  <!-- 根据订单号查询订单 -->
+  <select id="selectOrderByNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   select
+   	<include refid="Base_Column_List" />
+   from user_purchase_capacity where order_number = #{outTradeNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 查询用户所有正常容量订单 -->
+  <select id="selectCapacityTimeByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   select
+   	mature_time,order_number,capacity_id
+   from user_purchase_capacity where user_id = #{userId,jdbcType=INTEGER} and state = 1 and capacity_id != 1
+  </select>
+  
+  <select id="getUserCapacityList" resultType="java.util.Map" parameterType="java.util.Map" >
+   select upc.id,upc.add_time as addTime,upc.pay_time as payTime,upc.mature_time as matureTime,upc.price,
+	if(upc.state=1,'正常','到期') as state,if(c.type=1,'赠送','购买') as type,c.expire,c.size from user_purchase_capacity upc,capacity c
+	where upc.capacity_id=c.capacity_id and upc.user_id=#{userId,jdbcType=INTEGER} and upc.pay_state = 1
+  </select>
+  <!-- 添加用户初始容量 -->
+  <insert id="addUserPurchaseCapacity" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    insert into user_purchase_capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="capacityId != null" >
+        capacity_id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="matureTime != null" >
+        mature_time,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="capacityId != null" >
+        #{capacityId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=BIGINT},
+      </if>
+      <if test="matureTime != null" >
+        #{matureTime,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 添加用户购买容量的订单 -->
+  <insert id="addUserCapacityOrder" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    insert into user_purchase_capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="capacityId != null" >
+        capacity_id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="matureTime != null" >
+        mature_time,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="payState != null" >
+        pay_state,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="orderNumber != null" >
+        order_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="capacityId != null" >
+        #{capacityId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=BIGINT},
+      </if>
+      <if test="matureTime != null" >
+        #{matureTime,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="payState != null" >
+        #{payState,jdbcType=SMALLINT},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=SMALLINT},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNumber != null" >
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 用户购买容量 -->
+  <insert id="buyCapacity" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    insert into user_purchase_capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="capacityId != null" >
+        capacity_id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="matureTime != null" >
+        mature_time,
+      </if>
+      <if test="capacityId != null" >
+        price,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="payState != null" >
+        pay_state,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="note != null" >
+        note
+      </if>
+      <if test="orderNumber != null" >
+        order_number
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="capacityId != null" >
+        #{capacityId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=BIGINT},
+      </if>
+      <if test="matureTime != null" >
+        #{matureTime,jdbcType=BIGINT},
+      </if>
+      <if test="capacityId != null" >
+	  (select IF(discount=0,price,price*(discount/100)) as price from capacity where capacity_id=#{capacityId,jdbcType=INTEGER}),
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="payState != null" >
+        #{payState,jdbcType=SMALLINT},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=SMALLINT},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR}
+      </if>
+      <if test="orderNumber != null" >
+        #{orderNumber,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据订单号更新订单信息 -->
+  <update id="updateOrderByNum" >
+    update user_purchase_capacity
+    set
+      pay_time = #{1},
+      state = 1,
+      pay_state = 1
+    where order_number = #{0,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 根据订单号更新订单信息 -->
+  <update id="updateStateByNum" parameterType="java.lang.String" >
+    update user_purchase_capacity
+    set
+      state = 2
+    where order_number = #{orderNumber,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_purchase_capacity
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_purchase_capacity
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    insert into user_purchase_capacity (id, user_id, capacity_id, 
+      add_time, pay_time, mature_time, 
+      price, state)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{capacityId,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=BIGINT}, #{payTime,jdbcType=BIGINT}, #{matureTime,jdbcType=BIGINT}, 
+      #{price,jdbcType=VARCHAR}, #{state,jdbcType=SMALLINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    insert into user_purchase_capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="capacityId != null" >
+        capacity_id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="matureTime != null" >
+        mature_time,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="capacityId != null" >
+        #{capacityId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=BIGINT},
+      </if>
+      <if test="matureTime != null" >
+        #{matureTime,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    update user_purchase_capacity
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="capacityId != null" >
+        capacity_id = #{capacityId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=BIGINT},
+      </if>
+      <if test="matureTime != null" >
+        mature_time = #{matureTime,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.appmng.UserPurchaseCapacity" >
+    update user_purchase_capacity
+    set user_id = #{userId,jdbcType=INTEGER},
+      capacity_id = #{capacityId,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=BIGINT},
+      pay_time = #{payTime,jdbcType=BIGINT},
+      mature_time = #{matureTime,jdbcType=BIGINT},
+      price = #{price,jdbcType=VARCHAR},
+      state = #{state,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

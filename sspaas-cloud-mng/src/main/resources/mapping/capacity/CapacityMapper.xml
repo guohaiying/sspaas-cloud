@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.capacity.CapacityMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.Capacity" >
+    <id column="capacity_id" property="capacityId" jdbcType="INTEGER" />
+    <result column="size" property="size" jdbcType="BIGINT" />
+    <result column="price" property="price" jdbcType="REAL" />
+    <result column="expire" property="expire" jdbcType="INTEGER" />
+    <result column="descript" property="descript" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="discount" property="discount" jdbcType="SMALLINT" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    capacity_id, size, price, expire, descript, type, add_time, discount, icon
+  </sql>
+  
+  <!-- 容量类型列表数据总数 -->
+  <select id="total" resultType="java.lang.Integer" >
+    select
+    	count(*)
+    from capacity
+  </select>
+  
+  <!-- 容量类型数据 -->
+  <select id="selectCapacityTypeList" resultMap="BaseResultMap" parameterType="com.sspaas.sspaascloud.entity.PageCrt" >
+    select
+    <include refid="Base_Column_List" />
+    from capacity
+    	<if test="sidx != null and sidx != ''">
+          ORDER BY ${sidx} ${sord}
+        </if>
+    limit #{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT};
+  </select>
+  
+  <!-- 查询类型为赠送的主键id -->
+  <select id="selectCapacityByType" resultType="java.lang.Integer" >
+    select
+    	capacity_id
+    from capacity
+    where type = 1
+  </select>
+  
+  <!-- 修改容量类型 -->
+  <update id="editCapacity" parameterType="com.sspaas.sspaascloud.entity.Capacity" >
+    update capacity
+    <set >
+      <if test="size != null" >
+        size = #{size,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=REAL},
+      </if>
+      <if test="expire != null" >
+        expire = #{expire,jdbcType=INTEGER},
+      </if>
+      <if test="descript != null" >
+        descript = #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=SMALLINT},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where capacity_id = #{capacityId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 添加容量类型 -->
+  <insert id="addCapacity" parameterType="com.sspaas.sspaascloud.entity.Capacity" >
+    insert into capacity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="capacityId != null" >
+        capacity_id,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="expire != null" >
+        expire,
+      </if>
+      <if test="descript != null" >
+        descript,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="icon != null" >
+        icon
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="capacityId != null" >
+        #{capacityId,jdbcType=INTEGER},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=REAL},
+      </if>
+      <if test="expire != null" >
+        #{expire,jdbcType=INTEGER},
+      </if>
+      <if test="descript != null" >
+        #{descript,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=SMALLINT},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 删除容量类型 -->
+  <delete id="deleteCapacity" parameterType="java.lang.Integer" >
+    delete from capacity
+    where capacity_id = #{capacityId,jdbcType=INTEGER}
+  </delete>
+  
+</mapper>

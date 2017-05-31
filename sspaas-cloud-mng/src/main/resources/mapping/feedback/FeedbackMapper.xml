@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.feedback.FeedbackMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.Feedback" >
+    <id column="feedback_id" property="feedbackId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="f_state" property="fState" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    feedback_id, user_id, content, add_time, state, type
+  </sql>
+  
+  	<!-- 查询所有反馈 -->
+	<select id="findAllFeedBack" resultType="java.util.Map"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select fb.feedback_id as feedbackId,fb.user_id as userId,fb.title,fb.content,fb.add_time as addTime,fb.state,
+		(select name from feedback_type where feedback_type_id = fb.type) as type,fb.f_state as fstate,
+		u.username
+		from feedback fb,user u where fb.user_id=u.user_id
+		
+		<if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.title != null and map.title != ''">
+	        and fb.title like '%${map.title}%'
+	    </if>
+	    
+	    <if test="map.content != null and map.content != ''">
+	        and fb.content like '%${map.content}%'
+	    </if>
+	    
+	    <if test="map.state != null and map.state != ''">
+	        and fb.state=#{map.state,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.fstate != null and map.fstate != ''">
+	        and fb.f_state=#{map.fstate,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.type != null and map.type != ''">
+	        and fb.type=#{map.type,jdbcType=BIGINT}
+	    </if>
+		
+		order by ${sidx} ${sord},fstate asc LIMIT
+		#{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT}
+	</select>
+
+	<!-- 查询所有反馈数量 -->
+	<select id="findAllFeedBackCount" resultType="java.lang.Integer"
+		parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+		select count(*)
+		from feedback fb,user u where fb.user_id=u.user_id
+		
+		<if test="map.username != null and map.username != ''">
+	        and u.username like '%${map.username}%'
+	    </if>
+	    
+	    <if test="map.title != null and map.title != ''">
+	        and fb.title like '%${map.title}%'
+	    </if>
+	    
+	    <if test="map.content != null and map.content != ''">
+	        and fb.content like '%${map.content}%'
+	    </if>
+	    
+	    <if test="map.state != null and map.state != ''">
+	        and fb.state=#{map.state,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.fstate != null and map.fstate != ''">
+	        and fb.f_state=#{map.fstate,jdbcType=BIGINT}
+	    </if>
+	    
+	    <if test="map.type != null and map.type != ''">
+	        and fb.type=#{map.type,jdbcType=BIGINT}
+	    </if>
+	</select>
+	
+	<!-- 处理反馈 -->
+	<update id="handleFeedback" parameterType="java.lang.Integer" >
+    update feedback
+    set state = 1
+    where feedback_id = #{feedbackId,jdbcType=INTEGER}
+  </update>
+	
+	
+  
+</mapper>

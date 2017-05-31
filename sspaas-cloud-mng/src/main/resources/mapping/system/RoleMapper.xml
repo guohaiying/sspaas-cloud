@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sspaas.sspaascloud.dao.role.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.sspaas.sspaascloud.entity.Role" >
+    <id column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <select id="selectRoleByPage" resultType="java.util.Map"  parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+    SELECT role_id as roleId,role_name as roleName,time,description
+    FROM role
+
+    <if test="sidx != null and sidx != ''">
+      ORDER BY ${sidx} ${sord}
+    </if>
+    LIMIT #{index,jdbcType=BIGINT},#{rows,jdbcType=BIGINT}
+  </select>
+
+  <select id="total" resultType="java.lang.Integer" parameterType="com.sspaas.sspaascloud.entity.PageCrt">
+    SELECT count(role_id)
+    FROM role
+  </select>
+
+  <!-- 查询用户的角色id和角色名称 -->
+  <select id="selectRoleByUser" resultType="java.util.HashMap" parameterType="java.lang.String">
+    SELECT u.role_id as roleId,r.role_name as roleName
+    FROM role r,user_manager u
+    where u.user_id = #{userId,jdbcType=VARCHAR} and u.role_id = r.role_id
+  </select>
+
+  <!-- 查询所有的角色id和角色名称 -->
+  <select id="selectRole" resultType="java.util.HashMap" parameterType="java.lang.String">
+    SELECT role_id as roleId,role_name as roleName
+    FROM role
+  </select>
+
+  <!-- 添加角色 -->
+  <insert id="insertRole" parameterType="com.sspaas.sspaascloud.entity.Role" useGeneratedKeys="true" >
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="roleName != null" >
+        role_name,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="description != null" >
+        description
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from role
+    where role_id = #{roleId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sspaas.sspaascloud.entity.Role" >
+    insert into role (role_id, role_name, time, 
+      description)
+    values (#{roleId,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, 
+      #{description,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sspaas.sspaascloud.entity.Role" >
+    update role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where role_id = #{roleId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select role_id, role_name, time, description
+    from role
+    where role_id = #{roleId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select role_id, role_name, time, description
+    from role
+  </select>
+</mapper>
